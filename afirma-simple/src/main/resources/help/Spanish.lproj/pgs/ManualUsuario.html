@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Autofirma</title>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+</head>
+
+<body>
+
+<h1>Manual de Uso - FirmaDigitalISSET</h1>
+
+<p>
+Este manual te guiar&aacute; paso a paso para configurar y usar Autofirma para firmar
+documentos PDF con tu e.Firma del SAT.
+</p>
+
+<hr>
+
+<h2>Requisitos Previos</h2>
+
+<ul>
+  <li>Certificado e.Firma del SAT (<code>.cer</code>)</li>
+  <li>Clave privada (<code>.key</code>)</li>
+  <li>Contrase&ntilde;a de la e.Firma</li>
+  <li>Cuenta de dominio (el certificado se guardar&aacute; en los certificados del usuario Windows)</li>
+  <li>Firma escaneada (<code>.jpeg</code>, opcional)</li>
+</ul>
+
+<hr>
+
+<h2>Configuraci&oacute;n Inicial</h2>
+
+<h3>Paso 1: Convertir e.Firma SAT a PFX</h3>
+
+<ol>
+  <li>Abre <b>autofirma.exe</b></li>
+  <li>En la barra superior haz click en <b>Herramientas</b></li>
+  <li>Selecciona <b>Convertir e.Firma SAT a PFX</b></li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso1_menu.png" alt="Men&uacute; convertir eFirma" width="600">
+</p>
+
+<hr>
+
+<h3>Paso 2: Seleccionar Archivos de e.Firma</h3>
+
+<h4>Archivo de Certificado (.cer)</h4>
+<ol>
+  <li>Haz click en <b>Examinar</b></li>
+  <li>Selecciona tu archivo <code>.cer</code></li>
+</ol>
+
+<h4>Archivo de Clave Privada (.key)</h4>
+<ol>
+  <li>Haz click en <b>Examinar</b></li>
+  <li>Selecciona tu archivo <code>.key</code></li>
+</ol>
+
+<h4>Contrase&ntilde;a</h4>
+<ol>
+  <li>Ingresa la contrase&ntilde;a de tu e.Firma</li>
+  <li>Haz click en <b>Convertir e Instalar</b></li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso2_menu.png" alt="Seleccionar certificado" width="600">
+</p>
+
+<hr>
+
+<h2>Asistente para Importar Certificados</h2>
+
+<h3>Paso 3: Ubicaci&oacute;n del Almac&eacute;n</h3>
+<p>Despu&eacute;s de hacer click en "Convertir e Instalar", se abrir&aacute; autom&aacute;ticamente un cuadro de di&aacute;logo <b>Conversi&oacute;n exitosa</b> 
+    no cierre, dir&iacute;jase a la barra de tareas de click en el icono del "Asistente para importar certificados" y sigue estos pasos:
+</p>
+<ol>
+  <li>Selecciona <b>Usuario actual</b></li>
+  <li>Haz click en <b>Siguiente</b></li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso3_menu.png" alt="Usuario actual" width="600">
+</p>
+
+<h3>Paso 4: Archivo a Importar</h3>
+
+<ol>
+  <li>En la secci&oacute;n <b>Archivo a importar</b> , no necesitas cambiar nada, el archivo ya estar&aacute; seleccionado autom&aacute;ticamente</li>
+  <li>Haz click en <b>Siguiente</b></li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso4_menu.png" alt="Archivo a importar" width="600">
+</p>
+
+<h3>Paso 5: Protecci&oacute;n de Clave Privada</h3>
+
+<ol>
+  <li>Ingresa nuevamente la contrase&ntilde;a</li>
+  <li>Marca <b>Incluir todas las propiedades extendidas</b></li>
+  <li>Haz click en <b>Siguiente</b></li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso5_menu.png" alt="Protecci&oacute;n de clave" width="600">
+</p>
+
+<h3>Paso 6: Almac&eacute;n de Certificados</h3>
+
+<ol>
+  <li>En la secci&oacute;n <b>Almac&eacute;n de certificados</b>, no necesitas cambiar nada</li>
+  <li>Haz click en <b>Siguiente</b></li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso6_menu.png" alt="Almac&eacute;n de certificados" width="600">
+</p>
+
+<h3>Paso 7: Finalizar</h3>
+
+<ol>
+  <li>Revisa la informaci&oacute;n mostrada</li>
+  <li>Haz click en <b>Finalizar</b>para completar el proceso de importaci&oacute;n.</li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso7_menu.png" alt="Finalizar importaci&oacute;n" width="600">
+</p>
+
+<hr>
+
+<h2>Firmar Documentos PDF</h2>
+
+<h3>Paso 1: Abrir Archivos</h3>
+
+<h4>Opci&oacute;n A: Bot&oacute;n</h4>
+<ol>
+  <li>Haz click en <b>Seleccionar ficheros a firmar</b></li>
+  <li>Selecciona el PDF</li>
+</ol>
+<p align="center">
+  <img src="../img_manual_usuario/paso8_menu.png" alt="Seleccionar PDF" width="600">
+</p>
+
+<h4>Opci&oacute;n B: Arrastrar y Soltar</h4>
+<ol>
+  <li>Arrastra uno o varios PDFs a la ventana</li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso9_menu.png" alt="Seleccionar PDF" width="600">
+</p>
+
+<hr>
+
+<h3>Paso 2: Firma Visible (Opcional)</h3>
+
+<ol>
+  <li>Marca <b>Hacer la firma visible dentro del PDF</b></li>
+  <li>Dibuja el &aacute;rea de la firma</li>
+  <li>Selecciona la imagen de tu firma</li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso10_menu.png" alt="Firma visible" width="600">
+</p>
+
+<hr>
+
+<h3>Paso 3: Guardar Documento Firmado</h3>
+
+<ol>
+  <li>Selecciona la ubicaci&oacute;n</li>
+  <li>Haz click en <b>Guardar</b></li>
+</ol>
+
+<p align="center">
+  <img src="../img_manual_usuario/paso11_menu.png" alt="Guardar PDF firmado" width="600">
+</p>
+
+<hr>
+
+<h2>Consejos &Uacute;tiles</h2>
+
+<ul>
+  <li>Elimina los archivos <code>.pfx</code> despu&eacute;s de importarlos</li>
+  <li>Puedes firmar varios PDFs al mismo tiempo</li>
+  <li>La firma visible es opcional</li>
+  <li>Verifica siempre el certificado seleccionado</li>
+</ul>
+
+<hr>
+
+<h2>Licencia</h2>
+
+<p>
+Autofirma se distribuye bajo licencias GPLv2 y EUPL v1.1.
+</p>
+
+</body>
+</html>

@@ -88,4 +88,6 @@ release/*.log
 release/jre/*
 release/media/logo/*
 release/media/cert/*
+*.exe
+*.zip
 
