@@ -14,6 +14,17 @@ Spanish.lproj/index.html
 Spanish.lproj/gfx/dialogocambioformato.png
 Spanish.lproj/gfx/dialogocertificadoscargados.png
 Spanish.lproj/gfx/dialogoimportarcertificados.png
+Spanish.lproj/img_manual_usuario/paso1_menu.png
+Spanish.lproj/img_manual_usuario/paso2_menu.png
+Spanish.lproj/img_manual_usuario/paso3_menu.png
+Spanish.lproj/img_manual_usuario/paso4_menu.png
+Spanish.lproj/img_manual_usuario/paso5_menu.png
+Spanish.lproj/img_manual_usuario/paso6_menu.png
+Spanish.lproj/img_manual_usuario/paso7_menu.png
+Spanish.lproj/img_manual_usuario/paso8_menu.png
+Spanish.lproj/img_manual_usuario/paso9_menu.png
+Spanish.lproj/img_manual_usuario/paso10_menu.png
+Spanish.lproj/img_manual_usuario/paso11_menu.png
 Spanish.lproj/gfx/menualmacenesclaves_mini.png
 Spanish.lproj/gfx/menufirmascades_mini.png
 Spanish.lproj/gfx/menufirmasfacturae_mini.png
@@ -43,6 +54,7 @@ Spanish.lproj/gfx/pluginhash_comprobacion_directorio_mini.png
 Spanish.lproj/gfx/pluginhash_comprobacion_fichero_mini.png
 Spanish.lproj/pgs/Licencia.html
 Spanish.lproj/pgs/LineaComandos.html
+Spanish.lproj/pgs/ManualUsuario.html
 Spanish.lproj/pgs/MenuPlugins.html
 Spanish.lproj/pgs/MenuPreferencias.html
 Spanish.lproj/pgs/MenuRestauracion.html

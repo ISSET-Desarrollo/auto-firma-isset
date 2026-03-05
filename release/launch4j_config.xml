@@ -2,18 +2,18 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>[Definir_ruta]\afirma-simple\target\autofirma.jar</jar>
-  <outfile>[Definir_ruta]\release\autofirma.exe</outfile>
+  <jar>D:\ISSET_PROYECTOS\autofirma\recursos\auto-firma\afirma-simple\target\autofirma.jar</jar>
+  <outfile>D:\ISSET_PROYECTOS\autofirma\recursos\auto-firma\release\FirmaDigitalISSET.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
-  <priority>normal</priority>
+  <priority>high</priority>
   <downloadUrl></downloadUrl>
   <supportUrl></supportUrl>
   <stayAlive>false</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>[Definir_ruta]\logo.ico</icon>
+  <icon>D:\ISSET_PROYECTOS\autofirma\recursos\auto-firma\release\media\logo\logo.ico</icon>
   <jre>
     <path>jre</path>
     <requiresJdk>false</requiresJdk>
@@ -21,4 +21,10 @@
     <minVersion></minVersion>
     <maxVersion></maxVersion>
   </jre>
+  <splash>
+    <file>splash.bmp</file>
+    <waitForWindow>true</waitForWindow>
+    <timeout>60</timeout>
+    <timeoutErr>false</timeoutErr>
+  </splash>
 </launch4jConfig>

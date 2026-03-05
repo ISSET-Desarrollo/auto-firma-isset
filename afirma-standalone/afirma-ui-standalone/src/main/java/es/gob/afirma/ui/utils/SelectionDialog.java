@@ -26,6 +26,11 @@ import es.gob.afirma.core.ui.AOUIFactory;
 import es.gob.afirma.core.ui.GenericFileFilter;
 import es.gob.afirma.ui.principal.Main;
 
+import java.awt.FileDialog;
+import java.awt.Frame;
+import java.io.FilenameFilter;
+
+
 /** Clase para seleccionar un tipo de ventana de di&aacute;logo. */
 public final class SelectionDialog {
 
@@ -102,60 +107,83 @@ public final class SelectionDialog {
 	 * @param selectionMode Modo de selecci&oacute;n de {@link JFileChooser}.
 	 * @param filter Filtro de ficheros.
 	 * @return Archivo seleccionado o {@code null} si no se seleccion&oacute;o ninguno. */
-	private static File showOpenDialog(final Component parent, final String title, final String defaultDir, final int selectionMode, final ExtFilter filter) {
+	private static File showOpenDialog(
+        final Component parent,
+        final String title,
+        final String defaultDir,
+        final int selectionMode,
+        final ExtFilter filter) {
 
-        String currentDir = defaultDir != null ? defaultDir : Main.getPreferences().get("dialog.load.dir", null); //$NON-NLS-1$
-        if (currentDir == null) {
-            currentDir = "."; //$NON-NLS-1$
+    String currentDir = defaultDir != null
+            ? defaultDir
+            : Main.getPreferences().get("dialog.load.dir", ".");
+
+    // macOS se queda IGUAL (ya es nativo)
+    if (Platform.OS.MACOSX.equals(Platform.getOS())) {
+        try {
+            return AOUIFactory.getLoadFiles(
+                title,
+                currentDir,
+                null,
+                filter != null ? filter.getExtensions() : null,
+                filter != null ? filter.getDescription() : null,
+                selectionMode == JFileChooser.DIRECTORIES_ONLY,
+                false,
+                null,
+                parent
+            )[0];
         }
+        catch (final AOCancelledOperationException e) {
+            return null;
+        }
+    }
 
-        if (Platform.OS.MACOSX.equals(Platform.getOS())) {
-			try {
-				return AOUIFactory.getLoadFiles(
-						title,
-						currentDir,
-						null,
-						filter != null ? filter.getExtensions() : null,
-						filter != null ? filter.getDescription() : null,
-						false,
-						false,
-						null,
-						parent
-					)[0];
-			}
-			catch(final AOCancelledOperationException e) {
-				return null;
-			}
-		}
+    // === WINDOWS / LINUX ? FileDialog NATIVO ===
+    final Frame frame = parent instanceof Frame ? (Frame) parent : null;
+    final FileDialog dialog = new FileDialog(frame, title, FileDialog.LOAD);
 
-		//Instancia del componente FileChooser accesible
-        final JAccessibilityFileChooser fc = new JAccessibilityFileChooser(new File(currentDir));
+    dialog.setDirectory(currentDir);
 
-		fc.setDialogTitle(title);
-		fc.setFileSelectionMode(selectionMode);
-		if (filter != null) {
-			fc.setFileFilter(filter);
-		}
+    // Filtro simple por extensiones
+    if (filter != null && filter.getExtensions() != null) {
+        dialog.setFilenameFilter(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                for (String ext : filter.getExtensions()) {
+                    if (name.toLowerCase().endsWith("." + ext.toLowerCase())) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+    }
 
-		File filePath = null;
+    dialog.setVisible(true);
 
-		if(fc.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
-			filePath = fc.getSelectedFile();
-			if (filePath.getParentFile() != null) {
-			    Main.getPreferences().put("dialog.load.dir", filePath.getAbsolutePath()); //$NON-NLS-1$
-			    try {
-					Main.getPreferences().flush();
-				}
-			    catch (final BackingStoreException e) {
-					Logger.getLogger("es.gob.afirma").warning( //$NON-NLS-1$
-						"No se ha podido guardar el directorio actual de apertura de ficheros" //$NON-NLS-1$
-					);
-				}
-			}
-		}
+    final String file = dialog.getFile();
+    final String dir = dialog.getDirectory();
 
-		return filePath;
-	}
+    if (file == null || dir == null) {
+        return null;
+    }
+
+    File selected = new File(dir, file);
+
+    // Guardamos el directorio para la siguiente vez
+    try {
+        Main.getPreferences().put("dialog.load.dir", dir);
+        Main.getPreferences().flush();
+    }
+    catch (final BackingStoreException e) {
+        Logger.getLogger("es.gob.afirma").warning(
+            "No se pudo guardar el directorio actual"
+        );
+    }
+
+    return selected;
+}
+
 
 	/** Muestra un di&aacute;logo de guardado para almacenar los datos indicados.
      * Los datos ser&aacute;n almacenados en el directorio y con el nombre que
