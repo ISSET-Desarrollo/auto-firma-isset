@@ -268,7 +268,7 @@ public final class SslSecurityManager {
 
 		final MultiX509TrustManager trustManager = new MultiX509TrustManager(trustManagers);
 
-		LOGGER.info("Se configura el almacen de confianza de Autofirma"); //$NON-NLS-1$
+		LOGGER.info("Se configura el almacen de confianza de FirmaDigitalISSET"); //$NON-NLS-1$
 
 		final SSLContext sslContext = SSLContext.getInstance("SSL"); //$NON-NLS-1$
 		sslContext.init(null, new TrustManager[] { trustManager }, secureRandom);

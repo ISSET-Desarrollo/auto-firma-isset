@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>D:\ISSET_PROYECTOS\autofirma\recursos\auto-firma\afirma-simple\target\autofirma.jar</jar>
+  <jar>D:\ISSET_PROYECTOS\autofirma\recursos\auto-firma\afirma-simple\target\FirmaDigitalISSET.jar</jar>
   <outfile>D:\ISSET_PROYECTOS\autofirma\recursos\auto-firma\release\FirmaDigitalISSET.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
@@ -10,7 +10,7 @@
   <priority>high</priority>
   <downloadUrl></downloadUrl>
   <supportUrl></supportUrl>
-  <stayAlive>false</stayAlive>
+  <stayAlive>true</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
   <icon>D:\ISSET_PROYECTOS\autofirma\recursos\auto-firma\release\media\logo\logo.ico</icon>

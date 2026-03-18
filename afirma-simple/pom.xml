@@ -7,7 +7,7 @@
 	<packaging>jar</packaging>
 	
 	<name>afirma-ui-simpleafirma</name>
-	<description>Aplicacion Autofirma</description>
+	<description>Aplicacion FirmaDigitalISSET</description>
 	
 	<parent>
 		<groupId>es.gob.afirma</groupId>
@@ -323,7 +323,7 @@
 	      </activation>
 
 	      <build>
-	      	<finalName>autofirma</finalName>
+	      	<finalName>FirmaDigitalISSET</finalName>
        		<plugins>
      			<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
