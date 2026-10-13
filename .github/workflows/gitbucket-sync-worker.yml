@@ -14,7 +14,7 @@ jobs:
   sync:
     if: github.repository_owner == 'ISSET-Desarrollo'
     runs-on: [self-hosted, linux, x64, gitbucket-sync]
-    timeout-minutes: 30
+    timeout-minutes: 60
     env:
       GITHUB_TOKEN: ${{ github.token }}
       GITBUCKET_BASE_URL: http://127.0.0.1:8080
@@ -70,8 +70,20 @@ jobs:
             git remote add source "https://github.com/${GITHUB_REPOSITORY}.git"
             git remote add target "${GITBUCKET_BASE_URL}/git/${GITBUCKET_OWNER}/${GITHUB_REPOSITORY#*/}.git"
           fi
-          git -c credential.helper= fetch --no-tags source \
-            'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
+          for attempt in 1 2 3; do
+            if git -c credential.helper= -c http.version=HTTP/1.1 \
+              -c http.lowSpeedLimit=1024 -c http.lowSpeedTime=120 \
+              fetch --progress --no-tags source \
+              'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'; then
+              break
+            fi
+            if [[ "$attempt" == 3 ]]; then
+              echo 'La descarga no terminó después de tres intentos.' >&2
+              exit 1
+            fi
+            echo 'Reintentando la descarga después de una conexión interrumpida.'
+            sleep 15
+          done
           if ! git show-ref --quiet; then
             echo 'El repositorio de origen está vacío.'
             exit 0
