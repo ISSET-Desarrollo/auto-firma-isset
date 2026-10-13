@@ -1,0 +1,95 @@
+name: Copiar ramas y etiquetas a GitBucket
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gitbucket-sync-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository_owner == 'ISSET-Desarrollo'
+    runs-on: [self-hosted, linux, x64, gitbucket-sync]
+    timeout-minutes: 30
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      GITBUCKET_BASE_URL: http://127.0.0.1:8080
+      GITBUCKET_OWNER: GITHUB_SYNC
+    steps:
+      - name: Copiar ramas y etiquetas sin borrados
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          set -a
+          source /etc/github-sync-runner/gitbucket.env
+          set +a
+          : "${GITHUB_TOKEN:?Falta el token de GitHub}"
+          : "${GITBUCKET_USER:?Falta el usuario de GitBucket}"
+          : "${GITBUCKET_TOKEN:?Falta la credencial de GitBucket}"
+          export GIT_TERMINAL_PROMPT=0
+          work="$(mktemp -d "${RUNNER_TEMP}/gitbucket-sync.XXXXXX")"
+          export GIT_ASKPASS="$work/askpass"
+          cat > "$GIT_ASKPASS" <<'ASKPASS'
+          #!/usr/bin/env bash
+          set -eu
+          case "$1" in
+            *github.com*)
+              case "$1" in
+                *Username*) printf '%s\n' 'x-access-token' ;;
+                *Password*) printf '%s\n' "$GITHUB_TOKEN" ;;
+                *) exit 1 ;;
+              esac ;;
+            *127.0.0.1:8080*)
+              case "$1" in
+                *Username*) printf '%s\n' "$GITBUCKET_USER" ;;
+                *Password*) printf '%s\n' "$GITBUCKET_TOKEN" ;;
+                *) exit 1 ;;
+              esac ;;
+            *) exit 1 ;;
+          esac
+          ASKPASS
+          chmod 700 "$GIT_ASKPASS"
+          export LC_ALL=C
+          cache="/opt/github-sync-runner/cache/${GITHUB_REPOSITORY}"
+          mkdir -p "$cache"
+          exec 9>"$cache/sync.lock"
+          flock -w 120 9
+          if [[ ! -d "$cache/repo.git" ]]; then
+            git -c credential.helper= init --bare "$cache/repo.git"
+          fi
+          cd "$cache/repo.git"
+          if git remote get-url source >/dev/null 2>&1; then
+            git remote set-url source "https://github.com/${GITHUB_REPOSITORY}.git"
+            git remote set-url target "${GITBUCKET_BASE_URL}/git/${GITBUCKET_OWNER}/${GITHUB_REPOSITORY#*/}.git"
+          else
+            git remote add source "https://github.com/${GITHUB_REPOSITORY}.git"
+            git remote add target "${GITBUCKET_BASE_URL}/git/${GITBUCKET_OWNER}/${GITHUB_REPOSITORY#*/}.git"
+          fi
+          git -c credential.helper= fetch --no-tags source \
+            'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
+          if ! git show-ref --quiet; then
+            echo 'El repositorio de origen está vacío.'
+            exit 0
+          fi
+          while IFS= read -r ref; do
+            if git grep -I -l 'filter=lfs' "$ref" -- '.gitattributes' '**/.gitattributes' >/dev/null; then
+              echo "El repositorio utiliza Git LFS. Debe configurarse la copia de objetos LFS antes de continuar." >&2
+              exit 1
+            fi
+          done < <(git for-each-ref --format='%(refname)' refs/heads refs/tags)
+          git -c credential.helper= push --atomic target \
+            'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
+          git for-each-ref --format='%(objectname) %(refname)' refs/heads refs/tags | sort > "$work/source-refs"
+          git -c credential.helper= ls-remote --refs target 'refs/heads/*' 'refs/tags/*' \
+            | awk '{print $1 " " $2}' | sort > "$work/target-refs"
+          missing="$(comm -23 "$work/source-refs" "$work/target-refs")"
+          if [[ -n "$missing" ]]; then
+            echo 'La verificación detectó referencias que no coinciden.' >&2
+            exit 1
+          fi
+          echo 'Ramas y etiquetas verificadas. No se eliminaron referencias.'
