@@ -1,0 +1,15 @@
+name: Sincronizar con GitBucket
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: '18 * * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    if: github.repository_owner == 'ISSET-Desarrollo'
+    uses: ISSET-Desarrollo/auto-firma-isset/.github/workflows/gitbucket-sync-worker.yml@master
