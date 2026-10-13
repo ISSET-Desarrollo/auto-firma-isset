@@ -20,7 +20,7 @@ jobs:
       GITBUCKET_BASE_URL: http://127.0.0.1:8080
       GITBUCKET_OWNER: GITHUB_SYNC
     steps:
-      - name: Copiar ramas y etiquetas sin borrados
+      - name: Reflejar todos los cambios de ramas y etiquetas
         shell: bash
         run: |
           set -euo pipefail
@@ -73,8 +73,8 @@ jobs:
           for attempt in 1 2 3; do
             if git -c credential.helper= -c http.version=HTTP/1.1 \
               -c http.lowSpeedLimit=1024 -c http.lowSpeedTime=120 \
-              fetch --progress --no-tags source \
-              'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'; then
+              fetch --progress --prune --no-tags source \
+              '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'; then
               break
             fi
             if [[ "$attempt" == 3 ]]; then
@@ -84,24 +84,32 @@ jobs:
             echo 'Reintentando la descarga después de una conexión interrumpida.'
             sleep 15
           done
-          if ! git show-ref --quiet; then
-            echo 'El repositorio de origen está vacío.'
-            exit 0
-          fi
           while IFS= read -r ref; do
             if git grep -I -l 'filter=lfs' "$ref" -- '.gitattributes' '**/.gitattributes' >/dev/null; then
               echo "El repositorio utiliza Git LFS. Debe configurarse la copia de objetos LFS antes de continuar." >&2
               exit 1
             fi
           done < <(git for-each-ref --format='%(refname)' refs/heads refs/tags)
-          git -c credential.helper= push --atomic target \
-            'refs/heads/*:refs/heads/*' 'refs/tags/*:refs/tags/*'
+          # Solo se actualizan ramas y etiquetas del destino GITHUB_SYNC.
+          git for-each-ref --format='%(refname)' refs/heads refs/tags | sort > "$work/source-names"
+          git -c credential.helper= ls-remote --refs target 'refs/heads/*' 'refs/tags/*' \
+            | awk '{print $2}' | sort > "$work/target-names"
+          refspecs=()
+          while IFS= read -r ref; do
+            refspecs+=("+$ref:$ref")
+          done < "$work/source-names"
+          while IFS= read -r ref; do
+            refspecs+=(":$ref")
+          done < <(comm -13 "$work/source-names" "$work/target-names")
+          if (( ${#refspecs[@]} )); then
+            git -c credential.helper= push --atomic target "${refspecs[@]}"
+          fi
           git for-each-ref --format='%(objectname) %(refname)' refs/heads refs/tags | sort > "$work/source-refs"
           git -c credential.helper= ls-remote --refs target 'refs/heads/*' 'refs/tags/*' \
             | awk '{print $1 " " $2}' | sort > "$work/target-refs"
-          missing="$(comm -23 "$work/source-refs" "$work/target-refs")"
+          missing="$(comm -3 "$work/source-refs" "$work/target-refs")"
           if [[ -n "$missing" ]]; then
             echo 'La verificación detectó referencias que no coinciden.' >&2
             exit 1
           fi
-          echo 'Ramas y etiquetas verificadas. No se eliminaron referencias.'
+          echo 'Ramas y etiquetas idénticas al origen, incluidas reescrituras y eliminaciones.'
